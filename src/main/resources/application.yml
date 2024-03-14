@@ -1,0 +1,13 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:db;DB_CLOSE_DELAY=-1
+    username: foo
+    password: bar
+  jpa:
+    hibernate:
+      ddl-auto: update
+  h2:
+    console.enabled: true
+token:
+  signing:
+    key: 53A73E5F1C4E0A2D3B5F2D784E6A1B423D6F247D1F6E5C3A596D635A75327855

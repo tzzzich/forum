@@ -1,4 +1,4 @@
-package ru.tsu.hits24.firstsbproject;
+package ru.tsu.hits24.secondsbproject;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
