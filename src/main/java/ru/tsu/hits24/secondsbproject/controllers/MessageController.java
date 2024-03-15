@@ -5,6 +5,7 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jsqlparser.util.validation.metadata.DatabaseException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,14 +13,11 @@ import ru.tsu.hits24.secondsbproject.dto.ResponseDto;
 import ru.tsu.hits24.secondsbproject.dto.message.MessageCreateDto;
 import ru.tsu.hits24.secondsbproject.dto.message.MessageDto;
 import ru.tsu.hits24.secondsbproject.dto.message.MessageEditDto;
-import ru.tsu.hits24.secondsbproject.dto.topic.TopicCreateDto;
-import ru.tsu.hits24.secondsbproject.dto.topic.TopicDto;
-import ru.tsu.hits24.secondsbproject.dto.topic.TopicDtoShort;
-import ru.tsu.hits24.secondsbproject.dto.topic.TopicEditDto;
 import ru.tsu.hits24.secondsbproject.exception.InvalidArgumentsException;
 import ru.tsu.hits24.secondsbproject.exception.PermissionDeniedException;
 import ru.tsu.hits24.secondsbproject.jpa.service.MessageService;
-import ru.tsu.hits24.secondsbproject.jpa.service.TopicService;
+
+import java.time.LocalDateTime;
 
 @Slf4j
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -48,6 +46,33 @@ public class MessageController {
         MessageDto response = messageService.getMessage( id);
         return ResponseEntity.ok(response);
     }
+    @GetMapping("getAllMessages")
+    @SecurityRequirement(name = "JWT")
+    @ResponseBody
+    public ResponseEntity<Page<MessageDto>> getAllMessagesByPage(@RequestParam(defaultValue = "0") int page,
+                                                           @RequestParam(defaultValue = "10") int size,
+                                                                 @RequestParam(required = false) Long topicId) {
+        Page<MessageDto> response = messageService.getMessagesByPage(page, size, topicId);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/search")
+    @SecurityRequirement(name = "JWT")
+    @ResponseBody
+    public ResponseEntity<Page<MessageDto>> searchMessages(
+            @RequestParam(required = false) String text,
+            @RequestParam(required = false) LocalDateTime startDate,
+            @RequestParam(required = false) LocalDateTime endDate,
+            @RequestParam(required = false) String author,
+            @RequestParam(required = false) Long topicId,
+            @RequestParam(required = false) Long categoryId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        Page<MessageDto> messages = messageService.searchMessages(text, startDate, endDate, author, topicId, categoryId, page, size);
+        return ResponseEntity.ok(messages);
+    }
+
 
     @PatchMapping("edit")
     @SecurityRequirement(name = "JWT")

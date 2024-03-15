@@ -6,10 +6,12 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jsqlparser.util.validation.metadata.DatabaseException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.tsu.hits24.secondsbproject.dto.ResponseDto;
+import ru.tsu.hits24.secondsbproject.dto.message.MessageDto;
 import ru.tsu.hits24.secondsbproject.dto.topic.TopicCreateDto;
 import ru.tsu.hits24.secondsbproject.dto.topic.TopicDto;
 import ru.tsu.hits24.secondsbproject.dto.topic.TopicDtoShort;
@@ -45,6 +47,15 @@ public class TopicController {
     @ResponseBody
     public ResponseEntity<TopicDto> getTopic(@RequestParam Long id) {
         TopicDto response = topicService.getTopic( id);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("getAllTopics")
+    @SecurityRequirement(name = "JWT")
+    @ResponseBody
+    public ResponseEntity<Page<TopicDtoShort>> getAllTopicsByPage(@RequestParam(defaultValue = "0") int page,
+                                                                 @RequestParam(defaultValue = "10") int size) {
+        Page<TopicDtoShort> response = topicService.getTopicsByPage(page, size);
         return ResponseEntity.ok(response);
     }
 

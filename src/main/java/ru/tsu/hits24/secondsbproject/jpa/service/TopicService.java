@@ -3,9 +3,14 @@ package ru.tsu.hits24.secondsbproject.jpa.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jsqlparser.util.validation.metadata.DatabaseException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.tsu.hits24.secondsbproject.dto.ResponseDto;
 import ru.tsu.hits24.secondsbproject.dto.category.CategoryCreateDto;
+import ru.tsu.hits24.secondsbproject.dto.message.MessageDto;
 import ru.tsu.hits24.secondsbproject.dto.topic.TopicCreateDto;
 import ru.tsu.hits24.secondsbproject.dto.topic.TopicDto;
 import ru.tsu.hits24.secondsbproject.dto.topic.TopicDtoShort;
@@ -70,6 +75,21 @@ public class TopicService {
                 .orElseThrow(() ->new DatabaseException("Invalid topic id"));
 
         return new TopicDto(topic);
+    }
+    public Page<TopicDtoShort> getTopicsByPage(int pageNumber, int pageSize ) {
+        UserEntity user = userService.getCurrentUser();
+
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by("creationTime").descending());
+
+        Page<TopicEntity> topicPage = topicRepository.findAll(pageable);
+
+
+        return topicPage.map(this::mapToDto);
+
+    }
+
+    private TopicDtoShort mapToDto(TopicEntity entity) {
+        return new TopicDtoShort(entity);
     }
 
     public TopicDtoShort editTopic(TopicEditDto data, Long id) {
