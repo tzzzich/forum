@@ -40,6 +40,9 @@ public class UserEntity implements UserDetails {
     @Column(nullable = true)
     private Date birthDay;
 
+    @Column(nullable = false)
+    private Boolean isBanned;
+
     @ManyToMany
     @JoinTable(
             name = "users_roles",

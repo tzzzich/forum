@@ -16,6 +16,7 @@ import ru.tsu.hits24.secondsbproject.dto.user.UserEditDto;
 import ru.tsu.hits24.secondsbproject.dto.user.UserLoginDto;
 import ru.tsu.hits24.secondsbproject.exception.DuplicateEmailException;
 import ru.tsu.hits24.secondsbproject.exception.DuplicateUsernameException;
+import ru.tsu.hits24.secondsbproject.exception.PermissionDeniedException;
 import ru.tsu.hits24.secondsbproject.jpa.entity.RoleEntity;
 import ru.tsu.hits24.secondsbproject.jpa.entity.UserEntity;
 import ru.tsu.hits24.secondsbproject.jpa.repository.RoleRepository;
@@ -74,6 +75,9 @@ public class UserService {
         UserEntity user = userRepository.findByUsername(username);
         if (user == null) {
             throw new UsernameNotFoundException("User not found");
+        }
+        if (user.getIsBanned() == true) {
+            throw new PermissionDeniedException("User is banned");
         }
         return user;
     }
