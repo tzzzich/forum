@@ -1,10 +1,7 @@
 package ru.tsu.hits24.secondsbproject.jpa.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Table(name = "messages")
@@ -12,9 +9,8 @@ import lombok.Setter;
 @AllArgsConstructor(staticName = "of")
 @Setter
 @Getter
+@Builder
 public class MessageEntity extends ForumEntity{
-    @Column(nullable = false)
-    private String name;
 
     @Column(nullable = false)
     private String content;
