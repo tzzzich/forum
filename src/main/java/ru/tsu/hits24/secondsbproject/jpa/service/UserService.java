@@ -63,6 +63,11 @@ public class UserService {
 
     }
 
+    public UserEntity findById (Long id) {
+        return userRepository.findById(id)
+                .orElse(null);
+    }
+
     public UserEntity getCurrentUser() {
         var username = SecurityContextHolder.getContext().getAuthentication().getName();
         log.info(SecurityContextHolder.getContext().toString());
@@ -102,6 +107,10 @@ public class UserService {
 
     public Boolean isModerator(UserEntity user){
         return user.getRoles().contains(roleRepository.findByName("ROLE_MODERATOR"));
+    }
+
+    public Boolean isUser(UserEntity user){
+        return user.getRoles().contains(roleRepository.findByName("ROLE_USER"));
     }
 
     public void setModerator(UserEntity user){

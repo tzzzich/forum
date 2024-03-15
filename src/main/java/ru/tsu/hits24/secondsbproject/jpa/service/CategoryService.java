@@ -30,8 +30,6 @@ public class CategoryService {
 
     private final UserService userService;
     private final CategoryRepository categoryRepository;
-    private final JwtService jwtService;
-    private final AuthenticationManager authenticationManager;
 
     public Long createCategory(CategoryCreateDto data) {
         UserEntity user = userService.getCurrentUser();
@@ -140,6 +138,64 @@ public class CategoryService {
         return new ResponseDto("Success", "Category deleted successfully.");
     }
 
+    public CategoryDto setModerator(Long categoryId, Long moderId) {
+        UserEntity user = userService.getCurrentUser();
+
+        CategoryEntity category = categoryRepository.findById(categoryId)
+                .orElseThrow(() ->new DatabaseException("Invalid category id"));
+        UserEntity moder = userService.findById(moderId);
+        if (moder == null) {
+            throw new DatabaseException("Invalid user id");
+        }
+        if (!userService.isAdmin(user) ){
+            throw new PermissionDeniedException("User is not permitted to set moderators.");
+        }
+
+        userService.setModerator(moder);
+
+
+        category.getModerators().add(moder);
+
+        try {
+            categoryRepository.save(category);
+            userService.save(moder);
+        } catch (Exception e) {
+            throw new DatabaseException(e.getMessage());
+        }
+
+        return new CategoryDto(category);
+    }
+
+    public CategoryDto removeModerator(Long categoryId, Long moderId) {
+        UserEntity user = userService.getCurrentUser();
+
+        CategoryEntity category = categoryRepository.findById(categoryId)
+                .orElseThrow(() ->new DatabaseException("Invalid category id"));
+        UserEntity moder = userService.findById(moderId);
+        if (moder == null) {
+            throw new DatabaseException("Invalid user id");
+        }
+        if (!userService.isAdmin(user) ){
+            throw new PermissionDeniedException("User is not permitted set moderators.");
+        }
+
+        if (!category.getModerators().contains(moder)) {
+            throw new InvalidArgumentsException("User with id:" + moderId
+                    + "is not a moderator of a category:" + categoryId +".");
+        }
+
+        category.getModerators().remove(moder);
+
+        try {
+            categoryRepository.save(category);
+            userService.save(moder);
+        } catch (Exception e) {
+            throw new DatabaseException(e.getMessage());
+        }
+
+        return new CategoryDto(category);
+    }
+
     public CategoryDto getCategory(Long id) {
         UserEntity user = userService.getCurrentUser();
 
@@ -158,4 +214,5 @@ public class CategoryService {
 
         return result;
     }
+
 }

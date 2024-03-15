@@ -75,6 +75,22 @@ public class CategoryController {
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping("moderator/set")
+    @SecurityRequirement(name = "JWT")
+    @ResponseBody
+    public ResponseEntity<CategoryDto> setModerator(@RequestParam Long categoryId, @RequestParam Long moderatorId) {
+        CategoryDto response = categoryService.setModerator(categoryId, moderatorId);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("moderator/delete")
+    @SecurityRequirement(name = "JWT")
+    @ResponseBody
+    public ResponseEntity<CategoryDto> removeModerator(@RequestParam Long categoryId, @RequestParam Long moderatorId) {
+        CategoryDto response = categoryService.removeModerator(categoryId, moderatorId);
+        return ResponseEntity.ok(response);
+    }
+
     @ExceptionHandler(DatabaseException.class)
     public ResponseEntity<ResponseDto> handleDatabaseException (DatabaseException ex) {
         ResponseDto errorResponse = new ResponseDto("Bad Request", ex.getMessage());

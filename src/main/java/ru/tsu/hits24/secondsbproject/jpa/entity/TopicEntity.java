@@ -1,10 +1,7 @@
 package ru.tsu.hits24.secondsbproject.jpa.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
@@ -14,6 +11,7 @@ import java.util.List;
 @AllArgsConstructor(staticName = "of")
 @Setter
 @Getter
+@Builder
 public class TopicEntity extends ForumEntity{
 
     @Column(nullable = false)
