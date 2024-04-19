@@ -29,6 +29,6 @@ public class UserCreateDto {
     private String password;
 
     //date not later than today validation
-    private Date birthDay;
+    private String phoneNumber;
 
 }

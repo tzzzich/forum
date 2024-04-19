@@ -1,4 +1,4 @@
-package ru.tsu.hits24.secondsbproject.jpa.service;
+package ru.tsu.hits24.secondsbproject.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +26,7 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 @Slf4j
 public class MessageService {
+
     private final UserService userService;
     private final TopicRopository topicRepository;
     private final MessageRepository messageRepository;

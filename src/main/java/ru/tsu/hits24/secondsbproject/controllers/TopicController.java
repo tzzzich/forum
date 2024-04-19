@@ -3,37 +3,29 @@ package ru.tsu.hits24.secondsbproject.controllers;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jsqlparser.util.validation.metadata.DatabaseException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.tsu.hits24.secondsbproject.dto.ResponseDto;
-import ru.tsu.hits24.secondsbproject.dto.message.MessageDto;
 import ru.tsu.hits24.secondsbproject.dto.topic.TopicCreateDto;
 import ru.tsu.hits24.secondsbproject.dto.topic.TopicDto;
 import ru.tsu.hits24.secondsbproject.dto.topic.TopicDtoShort;
 import ru.tsu.hits24.secondsbproject.dto.topic.TopicEditDto;
 import ru.tsu.hits24.secondsbproject.exception.InvalidArgumentsException;
 import ru.tsu.hits24.secondsbproject.exception.PermissionDeniedException;
-import ru.tsu.hits24.secondsbproject.jpa.service.TopicService;
-
-import java.util.List;
+import ru.tsu.hits24.secondsbproject.service.TopicService;
 
 @Slf4j
-@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 @RequestMapping("/api/topic")
+@RequiredArgsConstructor
 public class TopicController {
     private final TopicService topicService;
-
-    @Autowired
-    public TopicController(TopicService topicService){
-        this.topicService = topicService;
-    }
-
+    /*
     @PostMapping("create")
     @SecurityRequirement(name = "JWT")
     @ResponseBody
@@ -112,5 +104,5 @@ public class TopicController {
     public ResponseEntity<ResponseDto> handleException(Exception ex) {
         ResponseDto errorResponse = new ResponseDto("Internal Server Error", ex.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
-    }
+    }*/
 }

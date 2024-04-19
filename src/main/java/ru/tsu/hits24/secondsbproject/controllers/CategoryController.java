@@ -3,13 +3,11 @@ package ru.tsu.hits24.secondsbproject.controllers;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jsqlparser.util.validation.metadata.DatabaseException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.*;
 import ru.tsu.hits24.secondsbproject.dto.ResponseDto;
 import ru.tsu.hits24.secondsbproject.dto.category.CategoryCreateDto;
@@ -18,22 +16,17 @@ import ru.tsu.hits24.secondsbproject.dto.category.CategoryEditDto;
 import ru.tsu.hits24.secondsbproject.dto.category.CategoryHierarchyDto;
 import ru.tsu.hits24.secondsbproject.exception.InvalidArgumentsException;
 import ru.tsu.hits24.secondsbproject.exception.PermissionDeniedException;
-import ru.tsu.hits24.secondsbproject.jpa.service.CategoryService;
+import ru.tsu.hits24.secondsbproject.service.CategoryService;
 
 import java.util.List;
 
 @Slf4j
-@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/category")
 public class CategoryController {
-
+/*
     private final CategoryService categoryService;
-
-    @Autowired
-    public CategoryController(CategoryService categoryService){
-        this.categoryService = categoryService;
-    }
 
     @PostMapping("create")
     @SecurityRequirement(name = "JWT")
@@ -113,6 +106,6 @@ public class CategoryController {
     public ResponseEntity<ResponseDto> handleException(Exception ex) {
         ResponseDto errorResponse = new ResponseDto("Internal Server Error", ex.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
-    }
+    }*/
 
 }

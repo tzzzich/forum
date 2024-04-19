@@ -1,22 +1,15 @@
-package ru.tsu.hits24.secondsbproject.jpa.service;
+package ru.tsu.hits24.secondsbproject.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import ru.tsu.hits24.secondsbproject.dto.JwtAuthenticationResponse;
-import ru.tsu.hits24.secondsbproject.dto.user.UserCreateDto;
-import ru.tsu.hits24.secondsbproject.dto.user.UserDto;
-import ru.tsu.hits24.secondsbproject.dto.user.UserEditDto;
-import ru.tsu.hits24.secondsbproject.dto.user.UserLoginDto;
 import ru.tsu.hits24.secondsbproject.exception.DuplicateEmailException;
 import ru.tsu.hits24.secondsbproject.exception.DuplicateUsernameException;
 import ru.tsu.hits24.secondsbproject.exception.PermissionDeniedException;
+import ru.tsu.hits24.secondsbproject.jpa.entity.Role;
 import ru.tsu.hits24.secondsbproject.jpa.entity.RoleEntity;
 import ru.tsu.hits24.secondsbproject.jpa.entity.UserEntity;
 import ru.tsu.hits24.secondsbproject.jpa.repository.RoleRepository;
@@ -25,7 +18,6 @@ import ru.tsu.hits24.secondsbproject.jpa.repository.UserRepository;
 import java.util.Arrays;
 import java.util.List;
 
-// UserService.java
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -34,11 +26,12 @@ public class UserService {
 
     private final RoleRepository roleRepository;
 
+    @Transactional
     public UserEntity save(UserEntity user) {
         return userRepository.save(user);
     }
 
-    public UserEntity getByEmail(String email) throws UsernameNotFoundException{
+    public UserEntity getByEmail(String email) {
         if (!userRepository.existsByEmail(email)) {
             throw new UsernameNotFoundException("User not found");
         }
@@ -54,15 +47,17 @@ public class UserService {
         return user;
     }
 
-    public UserDetailsService userDetailsUsernameService() {
-        return this::getByUsername;
 
-    }
 
-    public UserDetailsService userDetailsEmailService() {
-        return this::getByEmail;
-
-    }
+//    public UserDetailsService userDetailsUsernameService() {
+//        return this::getByUsername;
+//
+//    }
+//
+//    public UserDetailsService userDetailsEmailService() {
+//        return this::getByEmail;
+//
+//    }
 
     public UserEntity findById (Long id) {
         return userRepository.findById(id)
@@ -70,9 +65,11 @@ public class UserService {
     }
 
     public UserEntity getCurrentUser() {
-        var username = SecurityContextHolder.getContext().getAuthentication().getName();
+        var username = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         log.info(SecurityContextHolder.getContext().toString());
-        UserEntity user = userRepository.findByUsername(username);
+        UserEntity user = userRepository.findByUsername(username.toString());
+        //System.out.println(username);
+        //log.info(userRepository.findAll().toString());
         if (user == null) {
             throw new UsernameNotFoundException("User not found");
         }
@@ -95,31 +92,32 @@ public class UserService {
     }
 
     public List<RoleEntity> getBasicRole() {
-        return Arrays.asList(roleRepository.findByName("ROLE_USER"));
+        System.out.println(Arrays.asList(roleRepository.findByName("USER")));
+        return Arrays.asList(roleRepository.findByName("USER"));
     }
 
     public List<RoleEntity> getAdminRole() {
-        return Arrays.asList(roleRepository.findByName("ROLE_ADMIN"));
+        return Arrays.asList(roleRepository.findByName("ADMIN"));
     }
     public List<RoleEntity> getModeratorRole() {
-        return Arrays.asList(roleRepository.findByName("ROLE_MODERATOR"));
+        return Arrays.asList(roleRepository.findByName("MODERATOR"));
     }
 
     public Boolean isAdmin(UserEntity user){
-        return user.getRoles().contains(roleRepository.findByName("ROLE_ADMIN"));
+        return user.getRoles().contains(roleRepository.findByName("ADMIN"));
     }
 
     public Boolean isModerator(UserEntity user){
-        return user.getRoles().contains(roleRepository.findByName("ROLE_MODERATOR"));
+        return user.getRoles().contains(roleRepository.findByName("MODERATOR"));
     }
 
     public Boolean isUser(UserEntity user){
-        return user.getRoles().contains(roleRepository.findByName("ROLE_USER"));
+        return user.getRoles().contains(roleRepository.findByName("MODERATOR"));
     }
 
-    public void setModerator(UserEntity user){
+    public void setModerator(UserEntity user) {
         if (!isModerator(user)) {
-            user.getRoles().add(roleRepository.findByName("ROLE_MODERATOR"));
+            user.getRoles().add(roleRepository.findByName("MODERATOR"));
         }
     }
 

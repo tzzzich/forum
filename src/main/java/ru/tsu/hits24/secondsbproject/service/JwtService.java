@@ -1,4 +1,4 @@
-package ru.tsu.hits24.secondsbproject.jpa.service;
+package ru.tsu.hits24.secondsbproject.service;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -18,6 +18,7 @@ import java.util.function.Function;
 
 @Service
 public class JwtService {
+    /*
     @Value("${token.signing.key}")
     private String jwtSigningKey;
 
@@ -76,5 +77,5 @@ public class JwtService {
     private Key getSigningKey() {
         byte[] keyBytes = Decoders.BASE64.decode(jwtSigningKey);
         return Keys.hmacShaKeyFor(keyBytes);
-    }
+    }*/
 }

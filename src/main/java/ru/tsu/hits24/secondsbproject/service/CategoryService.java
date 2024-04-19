@@ -1,4 +1,4 @@
-package ru.tsu.hits24.secondsbproject.jpa.service;
+package ru.tsu.hits24.secondsbproject.service;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;

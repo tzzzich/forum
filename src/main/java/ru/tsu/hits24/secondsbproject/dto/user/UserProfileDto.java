@@ -18,12 +18,12 @@ public class UserProfileDto  {
     private String username;
 
     //date not later than today validation
-    private Date birthDay;
+    private String phoneNumber;
 
     public UserProfileDto(UserEntity user) {
-        this.birthDay = user.getBirthDay();
         this.email = user.getEmail();
         this.fullName = user.getFullName();
         this.username = user.getUsername();
+        this.phoneNumber = user.getPhoneNumber();
     }
 }

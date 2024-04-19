@@ -2,9 +2,9 @@ package ru.tsu.hits24.secondsbproject.controllers;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jsqlparser.util.validation.metadata.DatabaseException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,22 +15,17 @@ import ru.tsu.hits24.secondsbproject.dto.message.MessageDto;
 import ru.tsu.hits24.secondsbproject.dto.message.MessageEditDto;
 import ru.tsu.hits24.secondsbproject.exception.InvalidArgumentsException;
 import ru.tsu.hits24.secondsbproject.exception.PermissionDeniedException;
-import ru.tsu.hits24.secondsbproject.jpa.service.MessageService;
+import ru.tsu.hits24.secondsbproject.service.MessageService;
 
 import java.time.LocalDateTime;
 
 @Slf4j
-@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 @RequestMapping("/api/message")
+@RequiredArgsConstructor
 public class MessageController {
     private final MessageService messageService;
-
-    @Autowired
-    public MessageController(MessageService messageService){
-        this.messageService = messageService;
-    }
-
+/*
     @PostMapping("create")
     @SecurityRequirement(name = "JWT")
     @ResponseBody
@@ -111,5 +106,5 @@ public class MessageController {
     public ResponseEntity<ResponseDto> handleException(Exception ex) {
         ResponseDto errorResponse = new ResponseDto("Internal Server Error", ex.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
-    }
+    }*/
 }

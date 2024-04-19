@@ -22,5 +22,5 @@ public class UserEditDto  {
     private String username;
 
     //date not later than today validation
-    private Date birthDay;
+    private String phoneNumber;
 }

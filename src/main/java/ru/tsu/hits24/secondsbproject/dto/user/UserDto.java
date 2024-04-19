@@ -19,7 +19,7 @@ public class UserDto {
 
     private String password;
 
-    private Date birthDay;
+    private String phoneNumber;
 
     private String username;
 
@@ -27,7 +27,7 @@ public class UserDto {
 
     public UserDto(UserEntity user) {
         this.id = user.getId();
-        this.birthDay = user.getBirthDay();
+        this.phoneNumber = user.getPhoneNumber();
         this.email = user.getEmail();
         this.fullName = user.getFullName();
         this.id = user.getId();
