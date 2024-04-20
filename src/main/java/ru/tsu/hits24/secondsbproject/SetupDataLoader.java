@@ -45,8 +45,9 @@ public class SetupDataLoader implements
 
         System.out.println(userService.getAllRoles());
 
-        UserEntity user = UserEntity
-                .builder()
+        if (userRepository.findAll().isEmpty()) {
+            UserEntity user = UserEntity
+                    .builder()
                     .username("admin")
                     .fullName("Admin")
                     .roles(userService.getAllRoles())
@@ -56,9 +57,10 @@ public class SetupDataLoader implements
                     .isEnabled(true)
                     .build();
 
-        userRepository.save(user);
+            userRepository.save(user);
 
-        alreadySetup = true;
+            alreadySetup = true;
+        }
     }
 
     @Transactional

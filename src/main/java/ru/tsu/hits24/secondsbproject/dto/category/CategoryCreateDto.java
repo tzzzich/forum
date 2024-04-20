@@ -12,6 +12,5 @@ public class CategoryCreateDto {
     private String name;
 
     //private boolean containsTopics;
-
     private Long parentCategory;
 }

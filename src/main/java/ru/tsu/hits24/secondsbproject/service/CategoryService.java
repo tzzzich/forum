@@ -50,7 +50,8 @@ public class CategoryService {
         if (!userService.isAdmin(user) && !userService.isModerator(user)){
             throw new PermissionDeniedException("User is not permitted to create categories.");
         } else if (userService.isModerator(user) && !userService.isAdmin(user)) {
-            if (!CategoryUtils.canEditCategory(user, parent)) {
+            if (parent == null && !userService.isAdmin(user)
+                    || !CategoryUtils.canEditCategory(user, parent)) {
                 throw new PermissionDeniedException("User is not permitted to create subcategories in this category.");
             }
         }

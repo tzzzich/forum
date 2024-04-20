@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Repository;
 import ru.tsu.hits24.secondsbproject.jpa.entity.MessageEntity;
 
@@ -24,8 +25,8 @@ public interface MessageRepository extends JpaRepository<MessageEntity, Long> {
             "AND (:categoriesId IS NULL OR m.topic.category.id IN :categoriesId)")
     Page<MessageEntity> searchMessages(
             @Param("text") String text,
-            @Param("startDate") LocalDateTime startDate,
-            @Param("endDate") LocalDateTime endDate,
+            @Param("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+            @Param("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate,
             @Param("author") String author,
             @Param("topicId") Long topicId,
             @Param("categoriesId") List<Long> categoriesId,
