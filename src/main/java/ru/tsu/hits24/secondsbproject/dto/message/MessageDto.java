@@ -17,7 +17,7 @@ public class MessageDto {
 
     private LocalDateTime modificationTime;
 
-    private String creatorEmail;
+    public String creatorEmail;
 
     private String content;
 

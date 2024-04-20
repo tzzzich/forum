@@ -7,7 +7,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import ru.tsu.hits24.secondsbproject.Utils.CategoryUtils;
 import ru.tsu.hits24.secondsbproject.dto.ResponseDto;
 import ru.tsu.hits24.secondsbproject.dto.message.MessageCreateDto;
 import ru.tsu.hits24.secondsbproject.dto.message.MessageDto;
@@ -17,10 +20,12 @@ import ru.tsu.hits24.secondsbproject.exception.PermissionDeniedException;
 import ru.tsu.hits24.secondsbproject.jpa.entity.MessageEntity;
 import ru.tsu.hits24.secondsbproject.jpa.entity.TopicEntity;
 import ru.tsu.hits24.secondsbproject.jpa.entity.UserEntity;
+import ru.tsu.hits24.secondsbproject.jpa.repository.CategoryRepository;
 import ru.tsu.hits24.secondsbproject.jpa.repository.MessageRepository;
 import ru.tsu.hits24.secondsbproject.jpa.repository.TopicRopository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -30,6 +35,7 @@ public class MessageService {
     private final UserService userService;
     private final TopicRopository topicRepository;
     private final MessageRepository messageRepository;
+    private final CategoryRepository categoryRepository;
 
     public Long createMessage(MessageCreateDto data) {
         UserEntity user = userService.getCurrentUser();
@@ -102,13 +108,20 @@ public class MessageService {
 
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
 
+        List<Long> categoriesId = CategoryUtils.getAllCategoryIdsBelowCategory(
+                categoryRepository.findById(categoryId)
+                        .orElse(null)
+        );
+
+        System.out.println(categoriesId);
+
         return messageRepository.searchMessages(
                         text,
                         startDate,
                         endDate,
                         author,
                         topicId,
-                        categoryId,
+                        categoriesId,
                         pageable)
                 .map(this::mapToDto);
     }
@@ -117,6 +130,7 @@ public class MessageService {
         return new MessageDto(entity);
     }
 
+
     public MessageDto editMessage(MessageEditDto data, Long id) {
         UserEntity user = userService.getCurrentUser();
 
@@ -124,7 +138,7 @@ public class MessageService {
                 .orElseThrow(() -> new DatabaseException("Invalid message id"));
 
         if (message.getCreator() != user) {
-            throw new PermissionDeniedException("User is not permitted to edit this topic.");
+            throw new PermissionDeniedException("User is not permitted to edit this message.");
         }
 
         message.setContent(data.getContent());

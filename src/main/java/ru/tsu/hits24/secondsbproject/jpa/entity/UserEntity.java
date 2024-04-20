@@ -24,6 +24,7 @@ public class UserEntity{
     @Column(nullable = false, unique = true)
     private String username;
 
+    @NonNull
     private String password;
 
     private String phoneNumber;
@@ -32,5 +33,7 @@ public class UserEntity{
     private Collection<RoleEntity> roles = new ArrayList<>();
 
     private Boolean isBanned;
+
+    private Boolean isEnabled;
 
 }

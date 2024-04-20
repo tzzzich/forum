@@ -11,5 +11,5 @@ public class CategoryEditDto {
     @Size(min = 1, message = "Name must be at least 1 character long")
     private String name;
 
-    private boolean containsTopics;
+    //private boolean containsTopics;
 }

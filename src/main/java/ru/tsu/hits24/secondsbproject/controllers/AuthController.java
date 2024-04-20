@@ -8,12 +8,10 @@ import net.sf.jsqlparser.util.validation.metadata.DatabaseException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
-import ru.tsu.hits24.secondsbproject.JwtAuthentication;
 import ru.tsu.hits24.secondsbproject.dto.JwtAuthenticationResponse;
 import ru.tsu.hits24.secondsbproject.dto.ResponseDto;
 import ru.tsu.hits24.secondsbproject.dto.ValidationErrorDto;
@@ -24,7 +22,6 @@ import ru.tsu.hits24.secondsbproject.exception.DuplicateEmailException;
 import ru.tsu.hits24.secondsbproject.exception.DuplicateUsernameException;
 import ru.tsu.hits24.secondsbproject.service.UserAuthService;
 
-import java.io.Console;
 import java.util.HashMap;
 import java.util.Map;
 

@@ -28,7 +28,7 @@ public class CategoryDto {
 
     private String name;
 
-    private boolean containsTopics;
+    //private boolean containsTopics;
 
     private Long parentCategory;
 
@@ -44,7 +44,7 @@ public class CategoryDto {
         this.creationTime = entity.getCreationTime();
         this.modificationTime = entity.getModificationTime();
         this.creatorEmail = entity.getCreator().getEmail();
-        this.containsTopics = entity.isContainsTopics();
+//        this.containsTopics = entity.isContainsTopics();
         if (entity.getParentCategory() != null) {
             this.parentCategory = entity.getParentCategory().getId();
         }

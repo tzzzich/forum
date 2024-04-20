@@ -25,13 +25,14 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api/category")
 public class CategoryController {
-/*
+
     private final CategoryService categoryService;
 
     @PostMapping("create")
     @SecurityRequirement(name = "JWT")
     @ResponseBody
     public ResponseEntity<Long> createCategory(@Valid @RequestBody CategoryCreateDto data){
+        log.info("Initiating create category ");
         Long id = categoryService.createCategory(data);
         return ResponseEntity.ok(id);
     }
@@ -106,6 +107,6 @@ public class CategoryController {
     public ResponseEntity<ResponseDto> handleException(Exception ex) {
         ResponseDto errorResponse = new ResponseDto("Internal Server Error", ex.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
-    }*/
+    }
 
 }

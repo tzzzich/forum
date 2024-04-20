@@ -12,8 +12,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
-import ru.tsu.hits24.secondsbproject.JwtAuthentication;
-import ru.tsu.hits24.secondsbproject.dto.JwtAuthenticationResponse;
 import ru.tsu.hits24.secondsbproject.dto.ResponseDto;
 import ru.tsu.hits24.secondsbproject.dto.ValidationErrorDto;
 import ru.tsu.hits24.secondsbproject.dto.user.*;

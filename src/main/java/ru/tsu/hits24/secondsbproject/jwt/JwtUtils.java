@@ -1,11 +1,9 @@
-package ru.tsu.hits24.secondsbproject.service;
+package ru.tsu.hits24.secondsbproject.jwt;
 
 import io.jsonwebtoken.Claims;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import ru.tsu.hits24.secondsbproject.JwtAuthentication;
 import ru.tsu.hits24.secondsbproject.jpa.entity.Role;
-import ru.tsu.hits24.secondsbproject.jpa.entity.RoleEntity;
 
 import java.util.List;
 import java.util.Set;

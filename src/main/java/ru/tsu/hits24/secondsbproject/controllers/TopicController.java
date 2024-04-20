@@ -25,7 +25,6 @@ import ru.tsu.hits24.secondsbproject.service.TopicService;
 @RequiredArgsConstructor
 public class TopicController {
     private final TopicService topicService;
-    /*
     @PostMapping("create")
     @SecurityRequirement(name = "JWT")
     @ResponseBody
@@ -104,5 +103,5 @@ public class TopicController {
     public ResponseEntity<ResponseDto> handleException(Exception ex) {
         ResponseDto errorResponse = new ResponseDto("Internal Server Error", ex.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
-    }*/
+    }
 }

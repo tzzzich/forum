@@ -1,7 +1,6 @@
 package ru.tsu.hits24.secondsbproject.service;
 
 import io.jsonwebtoken.Claims;
-import jakarta.security.auth.message.AuthException;
 import jakarta.validation.Valid;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +11,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import ru.tsu.hits24.secondsbproject.JwtAuthentication;
+import ru.tsu.hits24.secondsbproject.jpa.entity.RoleEntity;
+import ru.tsu.hits24.secondsbproject.jwt.JwtAuthentication;
 import ru.tsu.hits24.secondsbproject.dto.JwtAuthenticationResponse;
 import ru.tsu.hits24.secondsbproject.dto.ResponseDto;
 import ru.tsu.hits24.secondsbproject.dto.user.UserCreateDto;
@@ -24,7 +24,10 @@ import ru.tsu.hits24.secondsbproject.exception.DuplicateUsernameException;
 import ru.tsu.hits24.secondsbproject.exception.InvalidArgumentsException;
 import ru.tsu.hits24.secondsbproject.exception.PermissionDeniedException;
 import ru.tsu.hits24.secondsbproject.jpa.entity.UserEntity;
+import ru.tsu.hits24.secondsbproject.jwt.JwtProvider;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,18 +39,22 @@ public class UserAuthService {
     private final Map<String, String> refreshStorage = new HashMap<>();
     private final JwtProvider jwtProvider;
 
-    //private final PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
 
     public JwtAuthenticationResponse register(@Valid @NonNull UserCreateDto data) {
+
+        RoleEntity[] basicRoles = {userService.getBasicRole()};
+
+
         System.out.println("Register method");
         UserEntity user = UserEntity.builder()
                 .fullName(data.getFullName())
                 .username(data.getUsername())
                 .email(data.getEmail())
-                .password(data.getPassword())
+                .password(passwordEncoder.encode(data.getPassword()))
                 .phoneNumber(data.getPhoneNumber())
-                .roles(userService.getBasicRole())
+                .roles(new ArrayList<RoleEntity>(Arrays.asList(basicRoles)))
                 .isBanned(false)
                 .build();
 
@@ -59,7 +66,7 @@ public class UserAuthService {
         }
         final String accessToken = jwtProvider.generateAccessToken(user);
         final String refreshToken = jwtProvider.generateRefreshToken(user);
-        //System.out.println(accessToken);
+
         refreshStorage.put(user.getUsername(), refreshToken);
         return new JwtAuthenticationResponse(accessToken, refreshToken);
     }
@@ -71,7 +78,7 @@ public class UserAuthService {
         } catch (Exception ex) {
             throw new UsernameNotFoundException("User not found");
         }
-        if ((authRequest.getPassword()==user.getPassword())) {
+        if (!passwordEncoder.matches(authRequest.getPassword(), user.getPassword())) {
             throw new BadCredentialsException("Invalid password");
         }
         final String accessToken = jwtProvider.generateAccessToken(user);
@@ -83,7 +90,6 @@ public class UserAuthService {
     public UserProfileDto getProfile() {
         log.info("Get Profile method");
         UserEntity user = userService.getCurrentUser();
-        System.out.println(user);
         return new UserProfileDto(user);
     }
 

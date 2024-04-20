@@ -18,8 +18,8 @@ public class CategoryEntity extends ForumEntity{
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
-    private boolean containsTopics;
+//    @Column(nullable = false)
+//    private boolean containsTopics;
 
     @ManyToOne
     @JoinColumn(name = "parent_category_id")

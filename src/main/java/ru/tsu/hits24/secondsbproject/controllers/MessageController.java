@@ -8,6 +8,7 @@ import net.sf.jsqlparser.util.validation.metadata.DatabaseException;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.tsu.hits24.secondsbproject.dto.ResponseDto;
 import ru.tsu.hits24.secondsbproject.dto.message.MessageCreateDto;
@@ -25,7 +26,7 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class MessageController {
     private final MessageService messageService;
-/*
+
     @PostMapping("create")
     @SecurityRequirement(name = "JWT")
     @ResponseBody
@@ -69,6 +70,7 @@ public class MessageController {
     }
 
 
+
     @PatchMapping("edit")
     @SecurityRequirement(name = "JWT")
     @ResponseBody
@@ -106,5 +108,5 @@ public class MessageController {
     public ResponseEntity<ResponseDto> handleException(Exception ex) {
         ResponseDto errorResponse = new ResponseDto("Internal Server Error", ex.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
-    }*/
+    }
 }

@@ -1,5 +1,6 @@
 package ru.tsu.hits24.secondsbproject.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jsqlparser.util.validation.metadata.DatabaseException;
@@ -8,6 +9,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import ru.tsu.hits24.secondsbproject.Utils.CategoryUtils;
 import ru.tsu.hits24.secondsbproject.dto.ResponseDto;
 import ru.tsu.hits24.secondsbproject.dto.category.CategoryCreateDto;
 import ru.tsu.hits24.secondsbproject.dto.message.MessageDto;
@@ -36,18 +38,23 @@ public class TopicService {
     private final TopicRopository topicRepository;
     private final CategoryRepository categoryRepository;
 
+    @Transactional
     public Long createTopic(TopicCreateDto data) {
         UserEntity user = userService.getCurrentUser();
 
         CategoryEntity parent = categoryRepository.findById(data.getParentCategory())
                 .orElseThrow(() ->new DatabaseException("Invalid parent category id"));
-        if (parent.isContainsTopics() == false) {
+        if (!parent.getSubcategories().isEmpty()) {
             throw new InvalidArgumentsException("Category cannot contain topics.");
         }
 
 
-        if (!userService.isAdmin(user) && !userService.isModerator(user) && !userService.isUser(user)){
+        if (!userService.isAdmin(user) && !userService.isModerator(user)){
             throw new PermissionDeniedException("User is not permitted to create topics.");
+        }
+
+        if (!userService.isAdmin(user) && !CategoryUtils.canEditCategory(user, parent)) {
+            throw new PermissionDeniedException("User is not permitted to create topics in this category.");
         }
 
         Long id;
@@ -93,13 +100,15 @@ public class TopicService {
         return new TopicDtoShort(entity);
     }
 
+    @Transactional
     public TopicDtoShort editTopic(TopicEditDto data, Long id) {
         UserEntity user = userService.getCurrentUser();
 
         TopicEntity topic = topicRepository.findById(id)
                 .orElseThrow(() ->new DatabaseException("Invalid topic id"));
 
-        if (topic.getCreator() != user) {
+        if (topic.getCreator() != user && !CategoryUtils.canEditCategory(user, topic.getCategory())
+                && !userService.isAdmin(user)) {
             throw new PermissionDeniedException("User is not permitted to edit this topic.");
         }
 
@@ -115,25 +124,21 @@ public class TopicService {
 
     }
 
+    @Transactional
     public ResponseDto deleteTopic(Long id) {
         UserEntity user = userService.getCurrentUser();
 
         TopicEntity topic = topicRepository.findById(id)
                 .orElseThrow(() ->new DatabaseException("Invalid topic id"));
 
-        if (topic.getCreator() != user && !topic.getCategory().getModerators().contains(user)
+        if (!CategoryUtils.canEditCategory(user, topic.getCategory())
                 && !userService.isAdmin(user)) {
-            throw new PermissionDeniedException("User is not permitted to delete this topic.");
-        }
-
-        if (topic.getCreator() != user && !topic.getCategory().getModerators().contains(user)) {
             throw new PermissionDeniedException("User is not permitted to delete this topic.");
         }
 
 //        if (!topic.getMessages().isEmpty()) {
 //            throw new InvalidArgumentsException("Cannot delete a non empty topic.");
 //        }
-
         try {
             topicRepository.delete(topic);
         } catch (Exception e) {
@@ -144,18 +149,15 @@ public class TopicService {
 
     }
 
+    @Transactional
     public TopicDtoShort archiveTopic(Long id) {
         UserEntity user = userService.getCurrentUser();
 
         TopicEntity topic = topicRepository.findById(id)
                 .orElseThrow(() ->new DatabaseException("Invalid topic id"));
 
-        if (topic.getCreator() != user && !topic.getCategory().getModerators().contains(user)
+        if (!CategoryUtils.canEditCategory(user, topic.getCategory())
                 && !userService.isAdmin(user)) {
-            throw new PermissionDeniedException("User is not permitted to archive this topic.");
-        }
-
-        if (topic.getCreator() != user && !topic.getCategory().getModerators().contains(user)) {
             throw new PermissionDeniedException("User is not permitted to archive this topic.");
         }
 
@@ -176,18 +178,15 @@ public class TopicService {
 
     }
 
+    @Transactional
     public TopicDtoShort unarchiveTopic(Long id) {
         UserEntity user = userService.getCurrentUser();
 
         TopicEntity topic = topicRepository.findById(id)
                 .orElseThrow(() ->new DatabaseException("Invalid topic id"));
 
-        if (topic.getCreator() != user && !topic.getCategory().getModerators().contains(user)
+        if (!CategoryUtils.canEditCategory(user, topic.getCategory())
                 && !userService.isAdmin(user)) {
-            throw new PermissionDeniedException("User is not permitted to unarchive this topic.");
-        }
-
-        if (topic.getCreator() != user && !topic.getCategory().getModerators().contains(user)) {
             throw new PermissionDeniedException("User is not permitted to unarchive this topic.");
         }
 

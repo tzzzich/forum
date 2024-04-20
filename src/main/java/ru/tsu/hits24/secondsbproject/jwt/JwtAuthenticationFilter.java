@@ -1,4 +1,4 @@
-package ru.tsu.hits24.secondsbproject.jpa;
+package ru.tsu.hits24.secondsbproject.jwt;
 
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
@@ -14,15 +14,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.GenericFilterBean;
-import ru.tsu.hits24.secondsbproject.JwtAuthentication;
-import ru.tsu.hits24.secondsbproject.jpa.entity.Role;
-import ru.tsu.hits24.secondsbproject.jpa.entity.RoleEntity;
 import ru.tsu.hits24.secondsbproject.jpa.repository.RoleRepository;
-import ru.tsu.hits24.secondsbproject.service.JwtProvider;
-import ru.tsu.hits24.secondsbproject.service.JwtUtils;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 @Slf4j
 @Component

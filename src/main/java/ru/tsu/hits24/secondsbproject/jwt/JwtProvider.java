@@ -1,13 +1,15 @@
-package ru.tsu.hits24.secondsbproject.service;
+package ru.tsu.hits24.secondsbproject.jwt;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import ru.tsu.hits24.secondsbproject.jpa.entity.RoleEntity;
 import ru.tsu.hits24.secondsbproject.jpa.entity.UserEntity;
 
 import javax.crypto.SecretKey;
@@ -16,21 +18,15 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.stream.Collectors;
+
 @Slf4j
 @Component
 public class JwtProvider {
 
-    private final String SIGNING_KEY = "MysigningKeykjsdfhskfhsdkjfhsdkfsdkjfsdkfjhsdkfhdsfjkhsdfjkhds";
-    private final SecretKey jwtAccessSecret;
-    private final SecretKey jwtRefreshSecret;
+    @Value("${jwt.secret.access}")
+    private String jwtSecret;
 
-    public JwtProvider(
-            @Value("${jwt.secret.access}") String jwtAccessSecret,
-            @Value("${jwt.secret.refresh}") String jwtRefreshSecret
-    ) {
-        this.jwtAccessSecret = Keys.hmacShaKeyFor(Decoders.BASE64.decode(SIGNING_KEY));
-        this.jwtRefreshSecret = Keys.hmacShaKeyFor(Decoders.BASE64.decode(SIGNING_KEY));
-    }
 
     public String generateAccessToken(@NonNull UserEntity user) {
         final LocalDateTime now = LocalDateTime.now();
@@ -39,11 +35,20 @@ public class JwtProvider {
         return Jwts.builder()
                 .subject(user.getUsername())
                 .expiration(accessExpiration)
-                .signWith(SignatureAlgorithm.HS256, SIGNING_KEY)
-                .claim("roles", user.getRoles())
+                .claim("userId", user.getId())
+                .claim("roles", user.getRoles()
+                        .stream()
+                        .map(RoleEntity::getName)
+                        .collect(Collectors.toList()))
                 .claim("fullName", user.getFullName())
                 .claim("email", user.getEmail())
+                .signWith(getSignKey(jwtSecret), SignatureAlgorithm.HS256)
                 .compact();
+    }
+
+    public SecretKey getSignKey(String secret) {
+        byte[] keyBytes = Decoders.BASE64.decode(secret);
+        return Keys.hmacShaKeyFor(keyBytes);
     }
 
     public String generateRefreshToken(@NonNull UserEntity user) {
@@ -53,19 +58,20 @@ public class JwtProvider {
         return Jwts.builder()
                 .subject(user.getUsername())
                 .expiration(refreshExpiration)
-                .signWith(SignatureAlgorithm.HS256, SIGNING_KEY)
+                .signWith(getSignKey(jwtSecret), SignatureAlgorithm.HS256)
                 .compact();
     }
 
     public boolean validateAccessToken(@NonNull String accessToken) {
-        return validateToken(accessToken, jwtAccessSecret);
+        return validateToken(accessToken, getSignKey(jwtSecret));
     }
 
     public boolean validateRefreshToken(@NonNull String refreshToken) {
-        return validateToken(refreshToken, jwtRefreshSecret);
+        return validateToken(refreshToken, getSignKey(jwtSecret));
     }
 
     private boolean validateToken(@NonNull String token, @NonNull SecretKey secret) {
+        log.info("secret: {}", secret);
         try {
             Jwts.parser()
                     .verifyWith(secret)
@@ -87,16 +93,16 @@ public class JwtProvider {
     }
 
     public Claims getAccessClaims(@NonNull String token) {
-        return getClaims(token, jwtAccessSecret);
+        return getClaims(token, getSignKey(jwtSecret));
     }
 
     public Claims getRefreshClaims(@NonNull String token) {
-        return getClaims(token, jwtRefreshSecret);
+        return getClaims(token, getSignKey(jwtSecret));
     }
 
     private Claims getClaims(@NonNull String token, @NonNull SecretKey secret) {
         return Jwts.parser()
-                .setSigningKey(SIGNING_KEY)
+                .setSigningKey(jwtSecret)
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();

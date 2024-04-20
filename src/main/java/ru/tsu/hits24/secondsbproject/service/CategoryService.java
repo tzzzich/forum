@@ -1,11 +1,13 @@
 package ru.tsu.hits24.secondsbproject.service;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jsqlparser.util.validation.metadata.DatabaseException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.stereotype.Service;
+import ru.tsu.hits24.secondsbproject.Utils.CategoryUtils;
 import ru.tsu.hits24.secondsbproject.dto.ResponseDto;
 import ru.tsu.hits24.secondsbproject.dto.category.CategoryCreateDto;
 import ru.tsu.hits24.secondsbproject.dto.category.CategoryDto;
@@ -31,9 +33,11 @@ public class CategoryService {
     private final UserService userService;
     private final CategoryRepository categoryRepository;
 
+    @Transactional
     public Long createCategory(CategoryCreateDto data) {
+        log.info("Initiating create category");
         UserEntity user = userService.getCurrentUser();
-
+        log.info("User is authenticated");
         CategoryEntity parent = null;
         if (data.getParentCategory() != null) {
             parent = categoryRepository.findById(data.getParentCategory())
@@ -43,22 +47,20 @@ public class CategoryService {
             }
         }
 
-
         if (!userService.isAdmin(user) && !userService.isModerator(user)){
             throw new PermissionDeniedException("User is not permitted to create categories.");
-        } else if (userService.isModerator(user)) {
-            if (parent!= null && (!parent.getModerators().contains(user))) {
+        } else if (userService.isModerator(user) && !userService.isAdmin(user)) {
+            if (!CategoryUtils.canEditCategory(user, parent)) {
                 throw new PermissionDeniedException("User is not permitted to create subcategories in this category.");
             }
         }
-        if (parent != null && parent.isContainsTopics() == true) {
+        if (parent != null && !parent.getTopics().isEmpty()) {
             throw new PermissionDeniedException("Category can not contain subcategories");
         }
         Long id;
         CategoryEntity category = CategoryEntity.builder()
                 .name(data.getName())
                 .parentCategory(parent)
-                .containsTopics(data.isContainsTopics())
                 .moderators(new ArrayList<UserEntity>() )
                 .subcategories(new ArrayList<CategoryEntity>())
                 .topics(new ArrayList<TopicEntity>())
@@ -66,6 +68,7 @@ public class CategoryService {
         category.setCreationTime(LocalDateTime.now());
         category.setModificationTime(LocalDateTime.now());
         category.setCreator(user);
+
         try {
             id = categoryRepository.save(category).getId();
         } catch (Exception e) {
@@ -75,6 +78,7 @@ public class CategoryService {
         return id;
     }
 
+    @Transactional
     public CategoryDto editCategory(CategoryEditDto data, Long id) {
         UserEntity user = userService.getCurrentUser();
         CategoryEntity category = categoryRepository.findById(id)
@@ -82,27 +86,26 @@ public class CategoryService {
 
         if (!userService.isAdmin(user) && !userService.isModerator(user)){
             throw new PermissionDeniedException("User is not permitted to edit categories.");
-        } else if (userService.isModerator(user)) {
-            if (!category.getModerators().contains(user)) {
+        } else if (!userService.isAdmin(user) && userService.isModerator(user)) {
+            if (!CategoryUtils.canEditCategory(user, category)) {
                 throw new PermissionDeniedException("User is not permitted to edit this category.");
             }
         }
 
-        if (!category.getTopics().isEmpty()){
-            if (data.isContainsTopics() == false) {
-                throw new InvalidArgumentsException("Cannot change change category type to contain subcategories" +
-                        ", it already contains topics.");
-            }
-        }
-        if (!category.getSubcategories().isEmpty()){
-            if (data.isContainsTopics() == true) {
-                throw new InvalidArgumentsException("Cannot change change category type to contain topics" +
-                        ", it already contains subcategories.");
-            }
-        }
+//        if (!category.getTopics().isEmpty()){
+//            if (data.isContainsTopics() == false) {
+//                throw new InvalidArgumentsException("Cannot change change category type to contain subcategories" +
+//                        ", it already contains topics.");
+//            }
+//        }
+//        if (!category.getSubcategories().isEmpty()){
+//            if (data.isContainsTopics() == true) {
+//                throw new InvalidArgumentsException("Cannot change change category type to contain topics" +
+//                        ", it already contains subcategories.");
+//            }
+//        }
 
         category.setName(data.getName());
-        category.setContainsTopics(data.isContainsTopics());
         category.setModificationTime(LocalDateTime.now());
 
         try {
@@ -114,14 +117,15 @@ public class CategoryService {
         return new CategoryDto(category);
     }
 
+    @Transactional
     public ResponseDto deleteCategory(Long id) {
         UserEntity user = userService.getCurrentUser();
         CategoryEntity category = categoryRepository.findById(id)
                 .orElseThrow(() ->new DatabaseException("Invalid category id"));
         if (!userService.isAdmin(user) && !userService.isModerator(user)){
             throw new PermissionDeniedException("User is not permitted to delete categories.");
-        } else if (userService.isModerator(user)) {
-            if (!category.getModerators().contains(user)) {
+        } else if (!userService.isAdmin(user) && userService.isModerator(user)) {
+            if (!CategoryUtils.canEditCategory(user, category)) {
                 throw new PermissionDeniedException("User is not permitted to edit this category.");
             }
         }
@@ -152,7 +156,6 @@ public class CategoryService {
         }
 
         userService.setModerator(moder);
-
 
         category.getModerators().add(moder);
 

@@ -37,7 +37,6 @@ public class CategoryHierarchyDto {
         this.creationTime = entity.getCreationTime();
         this.modificationTime = entity.getModificationTime();
         this.creatorEmail = entity.getCreator().getEmail();
-        this.containsTopics = entity.isContainsTopics();
         if (entity.getParentCategory() != null) {
             this.parentCategory = entity.getParentCategory().getId();
         }

@@ -14,11 +14,11 @@ public class CategoryDtoShort {
 
     private String name;
 
-    private boolean containsTopics;
+    //private boolean containsTopics;
 
     public CategoryDtoShort(CategoryEntity entity) {
         this.name = entity.getName();
         this.id = entity.getId();
-        this.containsTopics = entity.isContainsTopics();
+        //this.containsTopics = entity.isContainsTopics();
     }
 }

@@ -1,6 +1,8 @@
-package ru.tsu.hits24.secondsbproject.jpa;
+package ru.tsu.hits24.secondsbproject;
 
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -12,23 +14,25 @@ import ru.tsu.hits24.secondsbproject.jpa.entity.RoleEntity;
 import ru.tsu.hits24.secondsbproject.jpa.entity.UserEntity;
 import ru.tsu.hits24.secondsbproject.jpa.repository.UserRepository;
 import ru.tsu.hits24.secondsbproject.jpa.repository.RoleRepository;
+import ru.tsu.hits24.secondsbproject.service.UserService;
 
+import java.io.Console;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 @Component
+@RequiredArgsConstructor
+@Slf4j
 public class SetupDataLoader implements
         ApplicationRunner {
 
     boolean alreadySetup = false;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private RoleRepository roleRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final RoleRepository roleRepository;
+    private final UserService userService;
+    private final PasswordEncoder passwordEncoder;
 
 
 
@@ -39,15 +43,20 @@ public class SetupDataLoader implements
         createRoleIfNotFound("MODERATOR");
         createRoleIfNotFound("USER");
 
-        /*RoleEntity adminRole = roleRepository.findByName("ROLE_ADMIN");
-        UserEntity user = new UserEntity();
-        user.setFullName("Test");
-        user.setPassword(passwordEncoder.encode("string"));
-        user.setEmail("st@ring");
-        user.setRoles(Arrays.asList(adminRole));
-        user.setIsBanned(false);
-        user.setUsername("test");
-        userRepository.save(user);*/
+        System.out.println(userService.getAllRoles());
+
+        UserEntity user = UserEntity
+                .builder()
+                    .username("admin")
+                    .fullName("Admin")
+                    .roles(userService.getAllRoles())
+                    .password(passwordEncoder.encode("string"))
+                    .email("st@ring")
+                    .isBanned(false)
+                    .isEnabled(true)
+                    .build();
+
+        userRepository.save(user);
 
         alreadySetup = true;
     }
