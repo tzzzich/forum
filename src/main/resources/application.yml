@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://192.168.0.112:5432/forum_db
+    url: jdbc:postgresql://localhost:5432/forum_db
     username: postgres
     password: password
     driver-class-name: org.postgresql.Driver
@@ -15,4 +15,4 @@ minio:
   access-key: e4PTF1Z5fhhKhCpM46rn
   secret-key: Mal18wYZHCzpMXkT0UGkwvom6JWDMpOr0Ef1ZNzy
   bucket: forum
-  url: http://192.168.0.112:9000/
+  url: http://localhost:9000/

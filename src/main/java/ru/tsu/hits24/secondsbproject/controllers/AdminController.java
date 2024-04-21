@@ -24,6 +24,7 @@ public class AdminController {
     private final AdminService adminService;
 
     @PostMapping("user/create")
+    @SecurityRequirement(name = "JWT")
     @ResponseBody
     public ResponseEntity<ResponseDto> createUser(@Valid @RequestBody UserCreateDto data) {
         ResponseDto responseDto = adminService.createUser(data);

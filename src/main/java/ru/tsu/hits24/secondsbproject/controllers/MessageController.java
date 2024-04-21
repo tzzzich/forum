@@ -52,6 +52,16 @@ public class MessageController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("messagesByContent")
+    @SecurityRequirement(name = "JWT")
+    @ResponseBody
+    public ResponseEntity<Page<MessageDto>> getMessagesByContent(@RequestParam(defaultValue = "0") int page,
+                                                                 @RequestParam(defaultValue = "10") int size,
+                                                                 @RequestParam(required = false) String content) {
+        Page<MessageDto> response = messageService.getMessagesByPageByContent(page, size, content);
+        return ResponseEntity.ok(response);
+    }
+
     @GetMapping("/search")
     @SecurityRequirement(name = "JWT")
     @ResponseBody
@@ -87,26 +97,5 @@ public class MessageController {
         return ResponseEntity.ok(response);
     }
 
-    @ExceptionHandler(DatabaseException.class)
-    public ResponseEntity<ResponseDto> handleDatabaseException (DatabaseException ex) {
-        ResponseDto errorResponse = new ResponseDto("Bad Request", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
-    }
-    @ExceptionHandler(InvalidArgumentsException.class)
-    public ResponseEntity<ResponseDto> handleInvalidArgumentsException (InvalidArgumentsException ex) {
-        ResponseDto errorResponse = new ResponseDto("Bad Request", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
-    }
 
-    @ExceptionHandler(PermissionDeniedException.class)
-    public ResponseEntity<ResponseDto> handlePermissionDeniedException (PermissionDeniedException ex) {
-        ResponseDto errorResponse = new ResponseDto("Forbidden", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
-    }
-
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ResponseDto> handleException(Exception ex) {
-        ResponseDto errorResponse = new ResponseDto("Internal Server Error", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
-    }
 }

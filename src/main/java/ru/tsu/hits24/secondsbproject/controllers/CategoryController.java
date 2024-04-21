@@ -6,6 +6,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jsqlparser.util.validation.metadata.DatabaseException;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +15,7 @@ import ru.tsu.hits24.secondsbproject.dto.category.CategoryCreateDto;
 import ru.tsu.hits24.secondsbproject.dto.category.CategoryDto;
 import ru.tsu.hits24.secondsbproject.dto.category.CategoryEditDto;
 import ru.tsu.hits24.secondsbproject.dto.category.CategoryHierarchyDto;
+import ru.tsu.hits24.secondsbproject.dto.message.MessageDto;
 import ru.tsu.hits24.secondsbproject.exception.InvalidArgumentsException;
 import ru.tsu.hits24.secondsbproject.exception.PermissionDeniedException;
 import ru.tsu.hits24.secondsbproject.service.CategoryService;
@@ -66,6 +68,16 @@ public class CategoryController {
     @ResponseBody
     public ResponseEntity<List<CategoryHierarchyDto>> getCategoryHierarchy() {
         List<CategoryHierarchyDto> response = categoryService.getCategoryHierarchy();
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("categoriesByName")
+    @SecurityRequirement(name = "JWT")
+    @ResponseBody
+    public ResponseEntity<Page<CategoryDto>> getCategoriesByName(@RequestParam(defaultValue = "0") int page,
+                                                                @RequestParam(defaultValue = "10") int size,
+                                                                @RequestParam(required = false) String name) {
+        Page<CategoryDto> response = categoryService.getCategoriesByPageByName(page, size, name);
         return ResponseEntity.ok(response);
     }
 

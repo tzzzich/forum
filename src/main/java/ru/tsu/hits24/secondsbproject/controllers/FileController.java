@@ -60,21 +60,5 @@ public class FileController {
         return ResponseEntity.ok(null);
     }
     
-    @ExceptionHandler(InvalidArgumentsException.class)
-    public ResponseEntity<ResponseDto> handleInvalidArgumentsException (InvalidArgumentsException ex) {
-        ResponseDto errorResponse = new ResponseDto("Bad Request", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
-    }
 
-    @ExceptionHandler(PermissionDeniedException.class)
-    public ResponseEntity<ResponseDto> handlePermissionDeniedException (PermissionDeniedException ex) {
-        ResponseDto errorResponse = new ResponseDto("Forbidden", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
-    }
-
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ResponseDto> handleException(Exception ex) {
-        ResponseDto errorResponse = new ResponseDto("Internal Server Error", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
-    }
 }

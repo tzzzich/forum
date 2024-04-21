@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.tsu.hits24.secondsbproject.dto.ResponseDto;
+import ru.tsu.hits24.secondsbproject.dto.category.CategoryDto;
 import ru.tsu.hits24.secondsbproject.dto.topic.TopicCreateDto;
 import ru.tsu.hits24.secondsbproject.dto.topic.TopicDto;
 import ru.tsu.hits24.secondsbproject.dto.topic.TopicDtoShort;
@@ -50,6 +51,15 @@ public class TopicController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("categoriesByName")
+    @SecurityRequirement(name = "JWT")
+    @ResponseBody
+    public ResponseEntity<Page<TopicDtoShort>> getTopicsByName(@RequestParam(defaultValue = "0") int page,
+                                                                 @RequestParam(defaultValue = "10") int size,
+                                                                 @RequestParam(required = false) String name) {
+        Page<TopicDtoShort> response = topicService.getTopicsByPageByName(page, size, name);
+        return ResponseEntity.ok(response);
+    }
     @PatchMapping("edit")
     @SecurityRequirement(name = "JWT")
     @ResponseBody
@@ -82,26 +92,5 @@ public class TopicController {
         return ResponseEntity.ok(response);
     }
 
-    @ExceptionHandler(DatabaseException.class)
-    public ResponseEntity<ResponseDto> handleDatabaseException (DatabaseException ex) {
-        ResponseDto errorResponse = new ResponseDto("Bad Request", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
-    }
-    @ExceptionHandler(InvalidArgumentsException.class)
-    public ResponseEntity<ResponseDto> handleInvalidArgumentsException (InvalidArgumentsException ex) {
-        ResponseDto errorResponse = new ResponseDto("Bad Request", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
-    }
 
-    @ExceptionHandler(PermissionDeniedException.class)
-    public ResponseEntity<ResponseDto> handlePermissionDeniedException (PermissionDeniedException ex) {
-        ResponseDto errorResponse = new ResponseDto("Forbidden", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
-    }
-
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ResponseDto> handleException(Exception ex) {
-        ResponseDto errorResponse = new ResponseDto("Internal Server Error", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
-    }
 }
