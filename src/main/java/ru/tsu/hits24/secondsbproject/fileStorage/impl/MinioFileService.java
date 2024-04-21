@@ -32,7 +32,7 @@ public class MinioFileService implements FileService {
                     .build());
             return id;
         } catch (Exception e){
-            throw new RuntimeException("Error uploading file", e);
+            throw new RuntimeException(e);
         }
     }
 
