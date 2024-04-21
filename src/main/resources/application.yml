@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/forum_db
+    url: jdbc:postgresql://192.168.0.112:5432/forum_db
     username: postgres
     password: password
     driver-class-name: org.postgresql.Driver
@@ -12,7 +12,7 @@ spring:
 jwt:
   secret: qBTmv4oXFFR2GwjexDJ4t6fsIUIUhhXqlktXjXdkcyygs8nPVEwMfo29VDRRepYDVV5IkIxBMzr7OEHXEHd37w==
 minio:
-  access-key: CJgJaRhmKrIA1p5pjaq7
-  secret-key: dmBCbe8p1XW5V9iIxKlLGouCEc5u89UtxK91TBgD
+  access-key: e4PTF1Z5fhhKhCpM46rn
+  secret-key: Mal18wYZHCzpMXkT0UGkwvom6JWDMpOr0Ef1ZNzy
   bucket: forum
   url: http://192.168.0.112:9000/
