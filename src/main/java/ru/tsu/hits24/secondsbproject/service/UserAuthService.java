@@ -56,6 +56,7 @@ public class UserAuthService {
                 .phoneNumber(data.getPhoneNumber())
                 .roles(new ArrayList<RoleEntity>(Arrays.asList(basicRoles)))
                 .isBanned(false)
+                .isEnabled(true)
                 .build();
 
         try {
@@ -143,61 +144,5 @@ public class UserAuthService {
 
         return new UserProfileDto(user);
     }
-
-    public ResponseDto banUser(Long id) {
-
-        UserEntity user = userService.getCurrentUser();
-
-        UserEntity bannedUser = userService.findById(id);
-        if (bannedUser == null) {
-            throw new InvalidArgumentsException("Invalid user id.");
-        }
-
-        if (!userService.isAdmin(user)) {
-            throw new PermissionDeniedException("User doesn't have the rights to ban other users.");
-        }
-
-        if (userService.isAdmin(bannedUser)) {
-            throw new PermissionDeniedException("Can't ban admins.");
-        }
-
-        bannedUser.setIsBanned(true);
-
-        try {
-            userService.save(bannedUser);
-        } catch (Exception e) {
-            throw e;
-        }
-
-        return new ResponseDto("Success", "User with id:" + bannedUser.getId()
-                + "successfully banned.");
-    }
-
-    public ResponseDto unbanUser(Long id) {
-
-        UserEntity user = userService.getCurrentUser();
-
-        UserEntity bannedUser = userService.findById(id);
-        if (bannedUser == null) {
-            throw new InvalidArgumentsException("Invalid user id.");
-        }
-
-        if (!userService.isAdmin(user)) {
-            throw new PermissionDeniedException("User doesn't have the rights to unban other users.");
-        }
-
-        bannedUser.setIsBanned(false);
-
-        try {
-            userService.save(bannedUser);
-        } catch (Exception e) {
-            throw e;
-        }
-
-        return new ResponseDto("Success", "User with id:" + bannedUser.getId()
-                + "successfully unbanned.");
-    }
-
-
 
 }

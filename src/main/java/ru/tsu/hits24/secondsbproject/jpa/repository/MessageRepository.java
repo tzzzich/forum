@@ -31,4 +31,6 @@ public interface MessageRepository extends JpaRepository<MessageEntity, Long> {
             @Param("topicId") Long topicId,
             @Param("categoriesId") List<Long> categoriesId,
             Pageable pageable);
+
+    Page<MessageEntity> findByContentIgnoreCaseContaining(String content, Pageable pageable);
 }

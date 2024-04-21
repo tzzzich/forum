@@ -27,7 +27,6 @@ public class JwtProvider {
     @Value("${jwt.secret}")
     private String jwtSecret;
 
-
     public String generateAccessToken(@NonNull UserEntity user) {
         final LocalDateTime now = LocalDateTime.now();
         final Instant accessExpirationInstant = now.plusMinutes(15).atZone(ZoneId.systemDefault()).toInstant();
@@ -71,7 +70,6 @@ public class JwtProvider {
     }
 
     private boolean validateToken(@NonNull String token, @NonNull SecretKey secret) {
-        log.info("secret: {}", secret);
         try {
             Jwts.parser()
                     .verifyWith(secret)

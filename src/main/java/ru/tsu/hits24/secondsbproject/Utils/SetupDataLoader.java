@@ -1,4 +1,4 @@
-package ru.tsu.hits24.secondsbproject;
+package ru.tsu.hits24.secondsbproject.Utils;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

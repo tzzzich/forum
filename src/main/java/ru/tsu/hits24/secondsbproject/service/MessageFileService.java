@@ -1,5 +1,6 @@
 package ru.tsu.hits24.secondsbproject.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -37,6 +38,7 @@ public class MessageFileService {
         return result;
     }
 
+    @Transactional
     public FileDto upload(MultipartFile file, Long messageId) {
         try {
             FileEntity newFile = new FileEntity();
@@ -47,10 +49,9 @@ public class MessageFileService {
             newFile.setCreator(userService.getCurrentUser());
             newFile.setId(minioFileService.upload(file.getBytes()));
             fileRepository.save(newFile);
-            fileRepository.flush();
             return new FileDto(newFile.getId(), newFile.getFileName(), newFile.getFileSize());
         }catch (NoSuchElementException ex){
-            throw new InvalidArgumentsException("No message with id="+messageId);
+            throw new InvalidArgumentsException("Invalid message id");
         }catch (Exception e){
             throw new RuntimeException("File upload error");
         }
@@ -63,7 +64,7 @@ public class MessageFileService {
             result.setContent(minioFileService.download(id));
             return result;
         } catch (NoSuchElementException ex) {
-            throw new InvalidArgumentsException("No file with id=" + id);
+            throw new InvalidArgumentsException("Invalid message id");
         } catch (Exception e) {
             throw new RuntimeException("File upload error");
         }
@@ -74,7 +75,7 @@ public class MessageFileService {
             minioFileService.delete(id);
             return true;
         }catch (Exception e){
-            throw new RuntimeException("Error delete file with id="+id);
+            throw new RuntimeException("Error deleting file with id: " + id);
         }
     }
 

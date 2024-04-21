@@ -69,13 +69,14 @@ public class UserService {
         var username = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         log.info(SecurityContextHolder.getContext().toString());
         UserEntity user = userRepository.findByUsername(username.toString());
-        //System.out.println(username);
-        //log.info(userRepository.findAll().toString());
         if (user == null) {
             throw new UsernameNotFoundException("User not found");
         }
         if (user.getIsBanned() == true) {
             throw new PermissionDeniedException("User is banned");
+        }
+        if (user.getIsEnabled() == false) {
+            throw new PermissionDeniedException("User is deleted");
         }
         return user;
     }
@@ -93,7 +94,6 @@ public class UserService {
     }
 
     public RoleEntity getBasicRole() {
-        System.out.println(Arrays.asList(roleRepository.findByName("USER")));
         return roleRepository.findByName("USER");
     }
 

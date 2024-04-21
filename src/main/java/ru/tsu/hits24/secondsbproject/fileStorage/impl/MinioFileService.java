@@ -32,7 +32,7 @@ public class MinioFileService implements FileService {
                     .build());
             return id;
         } catch (Exception e){
-            throw new RuntimeException("Error upload file", e);
+            throw new RuntimeException("Error uploading file", e);
         }
     }
 
@@ -46,7 +46,7 @@ public class MinioFileService implements FileService {
             return in.readAllBytes();
         }
         catch (Exception e){
-            throw new RuntimeException("Failed download file id = " + id);
+            throw new RuntimeException("Failed to download file with id: " + id);
         }
     }
 
@@ -58,7 +58,7 @@ public class MinioFileService implements FileService {
                     .build());
             return true;
         } catch (Exception ex){
-            throw new RuntimeException("Error delete file id="+id);
+            throw new RuntimeException("Error deleting file with id: "+id);
         }
     }
 }

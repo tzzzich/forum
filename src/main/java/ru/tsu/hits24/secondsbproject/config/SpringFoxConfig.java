@@ -1,4 +1,4 @@
-package ru.tsu.hits24.secondsbproject;
+package ru.tsu.hits24.secondsbproject.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

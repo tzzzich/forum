@@ -1,5 +1,6 @@
 package ru.tsu.hits24.secondsbproject.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jsqlparser.util.validation.metadata.DatabaseException;
@@ -37,6 +38,8 @@ public class MessageService {
     private final MessageRepository messageRepository;
     private final CategoryRepository categoryRepository;
 
+
+    @Transactional
     public Long createMessage(MessageCreateDto data) {
         UserEntity user = userService.getCurrentUser();
 
@@ -77,7 +80,6 @@ public class MessageService {
         return new MessageDto(message);
     }
 
-
      public Page<MessageDto> getMessagesByPage(int pageNumber, int pageSize ,Long topicId) {
          UserEntity user = userService.getCurrentUser();
 
@@ -91,6 +93,22 @@ public class MessageService {
          }
 
          return messagePage.map(this::mapToDto);
+
+    }
+
+    public Page<MessageDto> getMessagesByPageByContent(int pageNumber, int pageSize , String content) {
+        UserEntity user = userService.getCurrentUser();
+
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by("creationTime").descending());
+
+        Page<MessageEntity> messagePage;
+        if (content == null){
+            messagePage = messageRepository.findAll(pageable);
+        } else {
+            messagePage = messageRepository.findByContentIgnoreCaseContaining(content, pageable);
+        }
+
+        return messagePage.map(this::mapToDto);
 
     }
 
@@ -131,6 +149,7 @@ public class MessageService {
     }
 
 
+    @Transactional
     public MessageDto editMessage(MessageEditDto data, Long id) {
         UserEntity user = userService.getCurrentUser();
 
@@ -153,6 +172,7 @@ public class MessageService {
 
     }
 
+    @Transactional
     public ResponseDto deleteMessage(Long id) {
         UserEntity user = userService.getCurrentUser();
 

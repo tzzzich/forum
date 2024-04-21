@@ -47,22 +47,6 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
-    @PostMapping("/ban")
-    @SecurityRequirement(name = "JWT")
-    @ResponseBody
-    public ResponseEntity<ResponseDto> banUser(@RequestParam Long id) {
-        ResponseDto response = userAuthService.banUser(id);
-        return ResponseEntity.ok(response);
-    }
-
-    @PostMapping("/unban")
-    @SecurityRequirement(name = "JWT")
-    @ResponseBody
-    public ResponseEntity<ResponseDto> unbanUser(@RequestParam Long id) {
-        ResponseDto response = userAuthService.unbanUser(id);
-        return ResponseEntity.ok(response);
-    }
-
     @ExceptionHandler(UsernameNotFoundException.class)
     public ResponseEntity<ResponseDto> handleUsernameNotFoundException(UsernameNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)

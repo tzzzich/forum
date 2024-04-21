@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import ru.tsu.hits24.secondsbproject.Utils.CategoryUtils;
 import ru.tsu.hits24.secondsbproject.dto.ResponseDto;
 import ru.tsu.hits24.secondsbproject.dto.category.CategoryCreateDto;
+import ru.tsu.hits24.secondsbproject.dto.category.CategoryDto;
 import ru.tsu.hits24.secondsbproject.dto.message.MessageDto;
 import ru.tsu.hits24.secondsbproject.dto.topic.TopicCreateDto;
 import ru.tsu.hits24.secondsbproject.dto.topic.TopicDto;
@@ -91,6 +92,22 @@ public class TopicService {
 
         Page<TopicEntity> topicPage = topicRepository.findAll(pageable);
 
+
+        return topicPage.map(this::mapToDto);
+
+    }
+
+    public Page<TopicDtoShort> getTopicsByPageByName(int pageNumber, int pageSize , String name) {
+        UserEntity user = userService.getCurrentUser();
+
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by("creationTime").descending());
+
+        Page<TopicEntity> topicPage;
+        if (name == null){
+            topicPage = topicRepository.findAll(pageable);
+        } else {
+            topicPage = topicRepository.findByNameIgnoreCaseContaining(name, pageable);
+        }
 
         return topicPage.map(this::mapToDto);
 
