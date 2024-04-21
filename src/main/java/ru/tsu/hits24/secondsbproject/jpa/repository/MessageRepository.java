@@ -25,8 +25,8 @@ public interface MessageRepository extends JpaRepository<MessageEntity, Long> {
             "AND (:categoriesId IS NULL OR m.topic.category.id IN :categoriesId)")
     Page<MessageEntity> searchMessages(
             @Param("text") String text,
-            @Param("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
-            @Param("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate,
+            @Param("startDate") LocalDateTime startDate,
+            @Param("endDate")  LocalDateTime endDate,
             @Param("author") String author,
             @Param("topicId") Long topicId,
             @Param("categoriesId") List<Long> categoriesId,

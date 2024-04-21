@@ -12,10 +12,15 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import ru.tsu.hits24.secondsbproject.jpa.entity.RoleEntity;
 import ru.tsu.hits24.secondsbproject.jwt.JwtAuthenticationFilter;
 
 import static org.springframework.security.config.Customizer.withDefaults;
@@ -67,12 +72,11 @@ public class SecurityConfiguration {
         return config.getAuthenticationManager();
     }
 
-   /* @Bean
+   /*@Bean
     public UserDetailsService userDetailsService(){
         UserDetails user = User.withDefaultPasswordEncoder()
                 .username("user")
-                .password("pass")
-                .roles("USER")
+                .password(passwordEncoder().encode("pass"))
                 .build();
         return new InMemoryUserDetailsManager(user);
     }*/

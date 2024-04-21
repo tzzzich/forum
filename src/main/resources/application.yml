@@ -8,10 +8,12 @@ spring:
     hibernate:
       ddl-auto: validate
     show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
   flyway:
     enabled: true
 jwt:
   secret: qBTmv4oXFFR2GwjexDJ4t6fsIUIUhhXqlktXjXdkcyygs8nPVEwMfo29VDRRepYDVV5IkIxBMzr7OEHXEHd37w==
+minio:
+  access-key: CJgJaRhmKrIA1p5pjaq7
+  secret-key: dmBCbe8p1XW5V9iIxKlLGouCEc5u89UtxK91TBgD
+  bucket: forum
+  url: http://192.168.0.112:9000/
